@@ -3,7 +3,8 @@ from __future__ import division
 import os
 import numpy as np
 import cv2
-from scipy.misc import imresize
+# from scipy.misc import imresize # imresize() removed in 1.3.0, Use Pillow instead
+from PIL import Image
 
 from dataloaders.helpers import *
 from torch.utils.data import Dataset
@@ -94,9 +95,11 @@ class DAVIS2016(Dataset):
             gt = np.zeros(img.shape[:-1], dtype=np.uint8)
 
         if self.inputRes is not None:
-            img = imresize(img, self.inputRes)
+            # img = imresize(img, self.inputRes)
+            img = np.array(Image.fromarray(img).resize(self.inputRes))
             if self.labels[idx] is not None:
-                label = imresize(label, self.inputRes, interp='nearest')
+                # label = imresize(label, self.inputRes, interp='nearest')
+                label = np.array(Image.fromarray(label).resize(self.inputRes, resample=Image.NEAREST))
 
         img = np.array(img, dtype=np.float32)
         img = np.subtract(img, np.array(self.meanval, dtype=np.float32))
