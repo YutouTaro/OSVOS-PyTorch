@@ -17,7 +17,8 @@ from torch.utils.data import DataLoader
 from dataloaders import davis_2016 as db
 from dataloaders import custom_transforms as tr
 from util import visualize as viz
-import scipy.misc as sm
+# import scipy.misc as sm # removed since 1.2.0. Use imageio.imwrite instead
+import imageio
 import networks.vgg_osvos as vo
 from layers.osvos_layers import class_balanced_cross_entropy_loss
 from dataloaders.helpers import *
@@ -186,7 +187,8 @@ with torch.no_grad():  # PyTorch 0.4.0 style
             pred = np.squeeze(pred)
 
             # Save the result, attention to the index jj
-            sm.imsave(os.path.join(save_dir_res, os.path.basename(fname[jj]) + '.png'), pred)
+            # sm.imsave(os.path.join(save_dir_res, os.path.basename(fname[jj]) + '.png'), pred) # removed in 1.2.0. Use imageio.imwrite instead
+            imageio.imwrite(os.path.join(save_dir_res, os.path.basename(fname[jj]) + '.png'), pred)
 
             if vis_res:
                 img_ = np.transpose(img.numpy()[jj, :, :, :], (1, 2, 0))
