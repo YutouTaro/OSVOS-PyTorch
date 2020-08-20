@@ -12,5 +12,5 @@ class Path(PathAbstract):
 
     @staticmethod
     def models_dir():
-        return "/content/drive/My Drive/datasets/DAVIS/models"
+        return "/content/OSVOS-PyTorch/models"
 
