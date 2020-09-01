@@ -37,7 +37,7 @@ p = {
 # # Setting other parameters
 resume_epoch = 0  # Default is 0, change if want to resume
 nEpochs = 240  # Number of epochs for training (500.000/2079)
-useTest = True  # See evolution of the test set when training?
+useTest = False  # See evolution of the test set when training?
 testBatch = 1  # Testing Batch
 nTestInterval = 5  # Run on test set every nTestInterval epochs
 db_root_dir = Path.db_root_dir()
@@ -58,11 +58,12 @@ if resume_epoch == 0:
         net = vo.OSVOS(pretrained=1)
 else:
     net = vo.OSVOS(pretrained=0)
-    print("Updating weights from: {}".format(
-        os.path.join(save_dir, modelName + '_epoch-' + str(resume_epoch - 1) + '.pth')))
-    net.load_state_dict(
-        torch.load(os.path.join(save_dir, modelName + '_epoch-' + str(resume_epoch - 1) + '.pth'),
-                   map_location=lambda storage, loc: storage))
+    path_pthFile = os.path.join(save_dir, modelName + '_epoch-' + str(resume_epoch - 1) + '.pth')
+    if os.path.exists(path_pthFile):
+        print("Updating weights from: {}".format(path_pthFile))
+        net.load_state_dict(torch.load(path_pthFile, map_location=lambda storage, loc: storage))
+    else:
+        print("{} does not exists!".format(path_pthFile))
 
 
 # Logging into Tensorboard
