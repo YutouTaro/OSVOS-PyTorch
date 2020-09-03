@@ -205,4 +205,30 @@ for epoch in range(resume_epoch, nEpochs):
                         print('***Testing *** Loss %d: %f' % (l, running_loss_ts[l]))
                         running_loss_ts[l] = 0
 
+with torch.no_grad():
+    for ii, sample_batched in enumerate(testloader):
+        inputs, gts = sample_batched['image'], sample_batched['gt']
+
+        # Forward pass of the mini-batch
+        inputs, gts = inputs.to(device), gts.to(device)
+
+        outputs = net.forward(inputs)
+
+        # Compute the losses, side outputs and fuse
+        losses = [0] * len(outputs)
+        for i in range(0, len(outputs)):
+            losses[i] = class_balanced_cross_entropy_loss(outputs[i], gts, size_average=False)
+            running_loss_ts[i] += losses[i].item()
+        loss = losses[-1]
+
+        # Print stuff
+        if ii % num_img_ts == num_img_ts - 1:
+            running_loss_ts = [x / num_img_ts for x in running_loss_ts]
+            loss_ts.append(running_loss_ts[-1])
+
+            print('[Epoch: %d, numImages: %5d]' % (epoch, ii + 1))
+            writer.add_scalar('data/test_loss_epoch', running_loss_ts[-1], epoch)
+            for l in range(0, len(running_loss_ts)):
+                print('***Testing *** Loss %d: %f' % (l, running_loss_ts[l]))
+                running_loss_ts[l] = 0
 writer.close()
