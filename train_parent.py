@@ -15,7 +15,8 @@ from torch.utils.data import DataLoader
 
 # Custom includes
 from util import visualize as viz
-from dataloaders import davis_2016 as db
+from dataloaders import pascal_2010_edges as db
+# from dataloaders import davis_2016 as db
 from dataloaders import custom_transforms as tr
 import networks.vgg_osvos as vo
 from layers.osvos_layers import class_balanced_cross_entropy_loss
